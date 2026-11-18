@@ -1,1 +1,0 @@
-# Xiaomi-ADB-And-Fastboot-Tool
