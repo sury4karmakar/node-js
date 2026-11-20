@@ -45,8 +45,8 @@ Write notes only for code that has no note yet.
 
 **For a code block or file:**
 
-1. Open every note file in `docs/` (for basic mode check the basic files, for detailed mode check the `detailed-` files).
-2. A topic already has a note if a section about the same function, class, object, method or import exists. If so, skip it.
+1. List the existing topics with `grep -H "^## " docs/*.md` (for detailed mode, `docs/detailed-*.md`; for basic mode, ignore the `detailed-` files and `ADD_NOTES.md`). Do not read note bodies.
+2. A topic already has a note if a heading for the same function, class, object, method or import exists in any file. If so, skip it.
 
 **For git changes ("current change"):**
 
