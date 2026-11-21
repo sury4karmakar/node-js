@@ -1,4 +1,4 @@
-# ADD_NOTES
+# NOTES_RULE
 
 Instructions for any AI tool (Claude, Gemini, Codex, etc.) that writes learning notes for this Node.js project.
 Follow this file exactly. Do not invent another format, add extra sections, or change headings, even if you think another format is better. Every tool and every session must produce the same output.
@@ -7,12 +7,12 @@ Follow this file exactly. Do not invent another format, add extra sections, or c
 
 ## 1. How the user calls this file
 
-The prompt is free-form. It always starts with `@ADD_NOTES.md`, followed by a target. The target can be any file, any code block or topic, or git. Do not match the prompt against fixed examples. Work out the mode and the target from the rules below.
+The prompt is free-form. It always starts with `@NOTES_RULE.md`, followed by a target. The target can be any file, any code block or topic, or git. Do not match the prompt against fixed examples. Work out the mode and the target from the rules below.
 
 **Prompt pattern:**
 
 ```
-@ADD_NOTES.md - <target> [- <topic>] [detail words]
+@NOTES_RULE.md - <target> [- <topic>] [detail words]
 ```
 
 | Part         | What it can be                                                                                                                                                                     |
@@ -23,13 +23,13 @@ The prompt is free-form. It always starts with `@ADD_NOTES.md`, followed by a ta
 
 **Examples (placeholders, not fixed values):**
 
-| Prompt                                              | Meaning                                     |
-| --------------------------------------------------- | ------------------------------------------- |
-| `@ADD_NOTES.md - @<file> - <topic>`                 | Basic note for `<topic>` in `<file>`.       |
-| `@ADD_NOTES.md - @<file>`                           | Basic notes for all new code in `<file>`.   |
-| `@ADD_NOTES.md - git`                               | Basic notes for the current git changes.    |
-| `@ADD_NOTES.md - detailed note for <topic> @<file>` | Detailed note for `<topic>` in `<file>`.    |
-| `@ADD_NOTES.md - detailed - git`                    | Detailed notes for the current git changes. |
+| Prompt                                               | Meaning                                     |
+| ---------------------------------------------------- | ------------------------------------------- |
+| `@NOTES_RULE.md - @<file> - <topic>`                 | Basic note for `<topic>` in `<file>`.       |
+| `@NOTES_RULE.md - @<file>`                           | Basic notes for all new code in `<file>`.   |
+| `@NOTES_RULE.md - git`                               | Basic notes for the current git changes.    |
+| `@NOTES_RULE.md - detailed note for <topic> @<file>` | Detailed note for `<topic>` in `<file>`.    |
+| `@NOTES_RULE.md - detailed - git`                    | Detailed notes for the current git changes. |
 
 The wording and order of the prompt can vary. Read the intent.
 
@@ -45,7 +45,7 @@ Write notes only for code that has no note yet.
 
 **For a code block or file:**
 
-1. List the existing topics with `grep -H "^## " docs/*.md` (for detailed mode, `docs/detailed-*.md`; for basic mode, ignore the `detailed-` files and `ADD_NOTES.md`). Do not read note bodies.
+1. List the existing topics with `grep -H "^## " docs/*.md` (for detailed mode, `docs/detailed-*.md`; for basic mode, ignore the `detailed-` files and `NOTES_RULE.md`). Do not read note bodies.
 2. A topic already has a note if a heading for the same function, class, object, method or import exists in any file. If so, skip it.
 
 **For git changes ("current change"):**
