@@ -1,9 +1,12 @@
 {
   "name": "node-js",
-  "type": "commonjs",
+  "version": "1.0.0",
+  "author": "Surya Karmakar",
+  "description": "Learning Node js from scratch",
   "main": "index.js",
+  "type": "commonjs",
+  "license": "ISC",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch index.js "
   }
 }
