@@ -67,7 +67,7 @@ If an existing note looks outdated because the code changed, do not edit it. Men
 
 ## 3. Where to write
 
-All notes go in the `docs/` folder at the project root. Create the folder if it does not exist.
+All notes go in the `docs/` folder at the project/docs. Create the folder if it does not exist.
 
 | Mode                | File                        |
 | ------------------- | --------------------------- |
