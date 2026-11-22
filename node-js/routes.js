@@ -11,11 +11,14 @@ function requestHandler(req, res) {
   if (url === "/post" && method === "POST") {
     const body = [];
 
+    // runs each time a piece of the request body arrives.
     req.on("data", (chunk) => {
       body.push(chunk);
     });
 
+    // runs once after the whole request body has been received.
     req.on("end", () => {
+      // joins the chunks into the full request body.
       const parsedBody = JSON.parse(Buffer.concat(body));
       console.log(parsedBody);
 
@@ -27,7 +30,3 @@ function requestHandler(req, res) {
 }
 
 module.exports = requestHandler;
-
-// module.exports = {
-//   requestHandler,
-// };
