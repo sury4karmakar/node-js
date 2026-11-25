@@ -17,6 +17,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// order matters: handlers run top to bottom, and the first one that matches.
+app.use("/", (req, res, next) => {
+  console.log("Log: /");
+  next();
+});
+
+// put specific routes before general ones.
+app.use("/user", (req, res, next) => {
+  console.log("Log: /user");
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
