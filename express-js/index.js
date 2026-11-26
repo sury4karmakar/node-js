@@ -1,14 +1,21 @@
 const express = require("express");
 const path = require("node:path");
+const { engine } = require("express-handlebars");
 
 const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
 const adminRoutes = require("./routes/admin");
 
+const PORT = 3000;
+
 // create express app.
 const app = express();
 
-const PORT = 3000;
+// setup template engine
+app.engine("hbs", engine({ defaultLayout: false }));
+app.set("view engine", "hbs");
+app.set("view engine", "ejs"); // default template engine
+app.set("views", path.join(__dirname, "views"));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -42,8 +49,22 @@ app.use("/logs", (req, res, next) => {
 });
 
 // send html
-app.use("/doc", (req, res, next) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+app.use("/docs-html", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "views", "docs.html"));
+});
+
+// renders hbs template
+app.use("/docs-hbs", (req, res, next) => {
+  res.render("docs.hbs", {
+    heading: "Welcome to Node JS Documentation - HBS",
+  });
+});
+
+// renders ejs template
+app.use("/docs-ejs", (req, res, next) => {
+  res.render("docs.ejs", {
+    heading: "Welcome to Node JS Documentation - EJS",
+  });
 });
 
 app.listen(PORT, () => {

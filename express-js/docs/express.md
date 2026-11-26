@@ -170,7 +170,7 @@ products.push(req.body);
 
 ```js
 app.use("/doc", (req, res, next) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "views", "docs.html"));
 });
 ```
 
@@ -184,7 +184,7 @@ app.use("/doc", (req, res, next) => {
 
 **Returns:** Nothing useful. The file is streamed to the client.
 
-**In this code:** Any request that starts with `/doc` sends `index.html` from the project folder. `path.join(__dirname, "index.html")` builds the absolute path.
+**In this code:** Any request that starts with `/doc` sends `docs.html` from the project folder. `path.join(__dirname, "docs.html")` builds the absolute path.
 
 ---
 
@@ -238,3 +238,92 @@ app.use("/admin", adminRoutes);
 | `callback` | function / router | The router to run for those requests.                          |
 
 **In this code:** `routes/admin.js` defines `/user`, but it is mounted on `/admin`. The real routes are `GET /admin/user` and `POST /admin/user`. The routes from `routes/user.js` use the same `/user` path without a prefix, so the two do not clash.
+
+---
+
+## `app.engine`
+
+```js
+app.engine("hbs", engine({ defaultLayout: false }));
+```
+
+**What it does:** Registers a template engine for a file extension. Express uses it to render files that end with that extension.
+
+**Parameters:**
+
+| Param      | Type     | Description                                                          |
+| ---------- | -------- | -------------------------------------------------------------------- |
+| `ext`      | string   | The file extension, without the dot (for example `"hbs"`).           |
+| `callback` | function | The engine function that reads the template and fills in the values. |
+
+**In this code:** Files that end with `.hbs` are rendered by the `engine` from `express-handlebars`. The `ejs` engine is not registered here. Express loads it by itself when a `.ejs` file is rendered.
+
+---
+
+## `app.set("view engine")`
+
+```js
+app.set("view engine", "hbs");
+app.set("view engine", "ejs");
+```
+
+**What it does:** Sets the default template engine. When `res.render()` gets a file name without an extension, Express uses this value as the extension.
+
+**Parameters:**
+
+| Param   | Type   | Description                                           |
+| ------- | ------ | ----------------------------------------------------- |
+| `name`  | string | The setting name. Here it is `"view engine"`.         |
+| `value` | string | The default extension (for example `"hbs"`, `"ejs"`). |
+
+**In this code:** The setting is written twice. The second call replaces the first, so the default engine is `ejs`. The routes below use a full file name with the extension (`docs.hbs`, `docs.ejs`), so each file uses its own engine.
+
+---
+
+## `app.set("views")`
+
+```js
+app.set("views", path.join(__dirname, "views"));
+```
+
+**What it does:** Sets the folder where Express looks for template files. The default is a `views` folder in the folder where the app starts.
+
+**Parameters:**
+
+| Param   | Type   | Description                                |
+| ------- | ------ | ------------------------------------------ |
+| `name`  | string | The setting name. Here it is `"views"`.    |
+| `value` | string | The absolute path of the templates folder. |
+
+**In this code:** `path.join(__dirname, "views")` points to the `views` folder next to `index.js`. `res.render()` looks for `docs.hbs` and `docs.ejs` there.
+
+---
+
+## `res.render`
+
+```js
+app.use("/docs-hbs", (req, res, next) => {
+  res.render("docs.hbs", {
+    heading: "Welcome to Node JS Documentation - HBS",
+  });
+});
+
+app.use("/docs-ejs", (req, res, next) => {
+  res.render("docs.ejs", {
+    heading: "Welcome to Node JS Documentation - EJS",
+  });
+});
+```
+
+**What it does:** Renders a template file with the given values and sends the resulting HTML as the response. It ends the request.
+
+**Parameters:**
+
+| Param    | Type   | Description                                                                |
+| -------- | ------ | -------------------------------------------------------------------------- |
+| `view`   | string | The template file name, relative to the `views` folder.                    |
+| `locals` | object | Optional. The values to pass to the template. Each key becomes a variable. |
+
+**Returns:** Nothing useful. The HTML is sent to the client.
+
+**In this code:** Both routes pass `{ heading: ... }`. In the template, `heading` is read as `{{heading}}` (HBS) or `<%= heading %>` (EJS). `/docs-hbs` uses the `hbs` engine and `/docs-ejs` uses the `ejs` engine, chosen by the file extension.
