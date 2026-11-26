@@ -10,9 +10,9 @@ const express = require("express");
 
 **Parameter:**
 
-| Param       | Type   | Description              |
-| ----------- | ------ | ------------------------ |
-| `"express"` | string | Name of the package.     |
+| Param       | Type   | Description          |
+| ----------- | ------ | -------------------- |
+| `"express"` | string | Name of the package. |
 
 **Returns:** function — the `express` factory function, with helpers attached to it.
 
@@ -52,17 +52,17 @@ app.use((req, res, next) => {
 
 **Parameter:**
 
-| Param      | Type     | Description                                    |
-| ---------- | -------- | ---------------------------------------------- |
+| Param      | Type     | Description                                                |
+| ---------- | -------- | ---------------------------------------------------------- |
 | `callback` | function | The middleware function. No path, so it matches all paths. |
 
 **Callback arguments:**
 
-| Arg    | Class                 | What it is                                              |
-| ------ | --------------------- | ------------------------------------------------------- |
-| `req`  | `express.Request`     | The incoming request.                                   |
-| `res`  | `express.Response`    | The response that will be sent back.                    |
-| `next` | function              | Passes control to the next middleware in the order.     |
+| Arg    | Class              | What it is                                          |
+| ------ | ------------------ | --------------------------------------------------- |
+| `req`  | `express.Request`  | The incoming request.                               |
+| `res`  | `express.Response` | The response that will be sent back.                |
+| `next` | function           | Passes control to the next middleware in the order. |
 
 **Returns:** the `app` object, so calls can be chained.
 
@@ -78,8 +78,8 @@ app.use("/", (req, res, next) => {
   next();
 });
 
-app.use("/user", (req, res, next) => {
-  console.log("Log: /user");
+app.use("/logs", (req, res, next) => {
+  console.log("Log: /logs");
 });
 ```
 
@@ -87,10 +87,10 @@ app.use("/user", (req, res, next) => {
 
 **Parameters:**
 
-| Param      | Type     | Description                                                  |
-| ---------- | -------- | ------------------------------------------------------------ |
-| `path`     | string   | The path prefix to match. `"/"` matches every request path.  |
-| `callback` | function | The middleware function.                                     |
+| Param      | Type     | Description                                                 |
+| ---------- | -------- | ----------------------------------------------------------- |
+| `path`     | string   | The path prefix to match. `"/"` matches every request path. |
+| `callback` | function | The middleware function.                                    |
 
 **Callback arguments:**
 
@@ -102,7 +102,7 @@ app.use("/user", (req, res, next) => {
 
 **Returns:** the `app` object, so calls can be chained.
 
-**In this code:** The `"/"` middleware is added after the two path-less middleware. It logs `Log: /` and calls `next()`, so every request continues to the next one. The `"/user"` middleware is added after it and runs only for paths that start with `/user`. It logs `Log: /user` but does not call `next()` or send a response, so the request stops there and does not finish. For a request to `/user`, the logs print in this order: `Log: Middleware 1`, `Log: Middleware 2`, `Log: /`, `Log: /user`. For any other path, `Log: /user` is not printed and Express sends its default 404 response.
+**In this code:** The `"/"` middleware is added after the two path-less middleware. It logs `Log: /` and calls `next()`, so every request continues to the next one. The `"/logs"` middleware is added after it and runs only for paths that start with `/logs`. It logs `Log: /logs` but does not call `next()` or send a response, so the request stops there and does not finish. For a request to `/logs`, the logs print in this order: `Log: Middleware 1`, `Log: Middleware 2`, `Log: /`, `Log: /logs`. For any other path, `Log: /logs` is not printed and Express sends its default 404 response.
 
 ---
 
@@ -116,8 +116,8 @@ app.use(express.json());
 
 **Parameter:**
 
-| Param     | Type   | Description                                                   |
-| --------- | ------ | ------------------------------------------------------------- |
+| Param     | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
 | `options` | object | Optional. Settings such as `limit` and `strict`. Not used here. |
 
 **Returns:** A middleware function `(req, res, next)`.
@@ -138,8 +138,8 @@ res.send({
 
 **Parameter:**
 
-| Param  | Type                          | Description                  |
-| ------ | ----------------------------- | ---------------------------- |
+| Param  | Type                          | Description                     |
+| ------ | ----------------------------- | ------------------------------- |
 | `body` | object, array, string, Buffer | The data to send to the client. |
 
 **Returns:** The `res` object, so calls can be chained.
@@ -158,8 +158,83 @@ products.push(req.body);
 
 **Property:**
 
-| Property   | Type   | Description                                      |
-| ---------- | ------ | ------------------------------------------------ |
+| Property   | Type   | Description                                             |
+| ---------- | ------ | ------------------------------------------------------- |
 | `req.body` | object | The parsed request body (a JavaScript object for JSON). |
 
 **In this code:** In `POST /products`, `req.body` is the JSON the client sent. It is pushed into the `products` array as a new item.
+
+---
+
+## `res.sendFile`
+
+```js
+app.use("/doc", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+```
+
+**What it does:** Sends a file from disk as the response and ends the request. It sets the `Content-Type` from the file extension (for example `text/html` for `.html`).
+
+**Parameter:**
+
+| Param  | Type   | Description                                                               |
+| ------ | ------ | ------------------------------------------------------------------------- |
+| `path` | string | Absolute path of the file to send. A relative path needs a `root` option. |
+
+**Returns:** Nothing useful. The file is streamed to the client.
+
+**In this code:** Any request that starts with `/doc` sends `index.html` from the project folder. `path.join(__dirname, "index.html")` builds the absolute path.
+
+---
+
+## `express.Router()`
+
+```js
+const router = express.Router();
+
+router.get("/user", (req, res) => {
+  res.send(users);
+});
+
+router.post("/user", (req, res) => {
+  users.push(req.body);
+  res.send(users);
+});
+
+module.exports = router;
+```
+
+**What it does:** Creates a router, a small separate group of routes and middleware. Routes are defined on the router and then mounted on the app, so each file in `routes/` can hold its own routes.
+
+**Returns:** A router object. It is also a middleware function, so it can be passed to `app.use()`.
+
+**Router methods used:**
+
+| Method                       | Description                                |
+| ---------------------------- | ------------------------------------------ |
+| `router.get(path, handler)`  | Handles `GET` requests that match `path`.  |
+| `router.post(path, handler)` | Handles `POST` requests that match `path`. |
+
+**In this code:** `routes/user.js` and `routes/product.js` each create a router with `GET` and `POST` routes, then export it with `module.exports`. In `index.js`, `app.use(userRoutes)` and `app.use(productRoutes)` mount them with no prefix, so the paths are `/user` and `/product`.
+
+---
+
+## `app.use("/admin", adminRoutes)`
+
+```js
+const adminRoutes = require("./routes/admin");
+
+app.use("/admin", adminRoutes);
+```
+
+**What it does:** Mounts a router under a path prefix. The prefix is added in front of every route path inside the router.
+
+**Parameters:**
+
+| Param      | Type              | Description                                                    |
+| ---------- | ----------------- | -------------------------------------------------------------- |
+| `path`     | string            | The prefix. Only requests that start with it reach the router. |
+| `callback` | function / router | The router to run for those requests.                          |
+
+**In this code:** `routes/admin.js` defines `/user`, but it is mounted on `/admin`. The real routes are `GET /admin/user` and `POST /admin/user`. The routes from `routes/user.js` use the same `/user` path without a prefix, so the two do not clash.

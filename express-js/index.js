@@ -1,22 +1,21 @@
 const express = require("express");
+const path = require("node:path");
 
-const PORT = 3000;
+const userRoutes = require("./routes/user");
+const productRoutes = require("./routes/product");
+const adminRoutes = require("./routes/admin");
 
 // create express app.
 const app = express();
 
-const products = [
-  {
-    id: 1,
-    name: "Iphone 18",
-  },
-  {
-    id: 2,
-    name: "Macbook",
-  },
-];
+const PORT = 3000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(userRoutes);
+app.use(productRoutes);
+app.use("/admin", adminRoutes);
 
 // adds middleware function to the app.
 app.use((req, res, next) => {
@@ -37,21 +36,14 @@ app.use("/", (req, res, next) => {
 });
 
 // put specific routes before general ones.
-app.use("/user", (req, res, next) => {
-  console.log("Log: /user");
+app.use("/logs", (req, res, next) => {
+  console.log("Log: /logs");
+  next();
 });
 
-app.get("/products", (req, res) => {
-  res.send({
-    data: products,
-  });
-});
-
-app.post("/products", (req, res) => {
-  products.push(req.body);
-  res.send({
-    data: products,
-  });
+// send html
+app.use("/doc", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.listen(PORT, () => {
